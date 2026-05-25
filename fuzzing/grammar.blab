@@ -1,0 +1,33 @@
+
+output = command_sequence
+
+command_sequence = help_command
+                   init_command 
+                   add_command{5}
+                   list_command 
+                   clear_command 
+                   quit_command
+
+init_command = "init password.txt Qses1920\n" 
+open_command = "open password.txt Qses1920\n"
+
+add_command = "add "  user  " " password "\n"
+
+user = fixed_user | fixed_user [a-z]
+
+fixed_user = "admin" | "alice" | "bobby" | "charles" | "edward" | "ziggy" | "robot"
+
+password = fixed_password | fixed_password [0-9a-zA-Z.:,!?]{1} | [0-9a-zA-Z.:,!?]{1} fixed_password 
+
+fixed_password = "Aa3456" | "Zz3456789012" | "aa3456" | "ZZ3456789012" | "Abcdef" | "abcdef." | "123456789012" | "12!3456" | "qses"
+
+list_command = "list\n"
+
+save_command = "save\n"
+
+clear_command = "clear\n"
+
+quit_command = "quit\n"
+
+help_command = "help\n" | "help " ("add"|"delete"|"save"|"list"|"nop") "\n"
+
