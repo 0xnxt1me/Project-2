@@ -65,7 +65,7 @@ pwm_res_t pwm_is_valid_password(const char* password) {
   }
 
   // Black-list check 
-  for (int i = 0; i < BLACK_LIST_SIZE; i++) {
+  for (size_t i = 0; i < BLACK_LIST_SIZE; i++) {
     if (strcasestr(password, BLACK_LIST[i]) != NULL) {
       return PWM_INVALID_PASSWORD;
     }

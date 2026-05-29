@@ -41,7 +41,6 @@ static pwm_res_t pwm_alloc(char* file, PWM* p_pwm) {
     free(pwm);
     perror("strdup");
     pwm_error("Could not allocate memory!");
-    free(pwm);
     return PWM_MEMORY_ALLOCATION_ERROR;
   }
   pwm -> entries = NULL;

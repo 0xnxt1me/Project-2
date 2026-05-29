@@ -60,7 +60,7 @@ pwm_res_t pwm_handle_command
 (PWM* pwm, char* command, char** command_args, int n_args) {
   pwm_res_t r = PWM_OK;
   int i, j;
-  for (i = 0; i < N_AVAILABLE_COMMANDS; i++) {
+  for (size_t i = 0; i < N_AVAILABLE_COMMANDS; i++) {
     if (strcmp(command, AVAILABLE_COMMANDS[i].command_name) == 0) {
       break; 
     }
@@ -68,7 +68,7 @@ pwm_res_t pwm_handle_command
   printf(">> Command: '%s' [", command); 
   for (j = 0; j < n_args; j++) { 
      printf(" '"); 
-     printf(command_args[j]);
+     printf("%s", command_args[j]);  
      printf("'"); 
   }
   printf(" ]\n");
