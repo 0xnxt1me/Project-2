@@ -59,12 +59,16 @@ static command_t AVAILABLE_COMMANDS[] = {
 pwm_res_t pwm_handle_command
 (PWM* pwm, char* command, char** command_args, int n_args) {
   pwm_res_t r = PWM_OK;
-  int i, j;
-  for (size_t i = 0; i < N_AVAILABLE_COMMANDS; i++) {
+  size_t i; // Declaramos o i aqui como size_t (limpa o warning de signedness)
+  int j;
+
+  // Usamos o i diretamente no ciclo, sem colocar 'size_t' ou 'int' aqui dentro!
+  for (i = 0; i < N_AVAILABLE_COMMANDS; i++) {
     if (strcmp(command, AVAILABLE_COMMANDS[i].command_name) == 0) {
       break; 
     }
   }
+
   printf(">> Command: '%s' [", command); 
   for (j = 0; j < n_args; j++) { 
      printf(" '"); 
@@ -72,11 +76,17 @@ pwm_res_t pwm_handle_command
      printf("'"); 
   }
   printf(" ]\n");
-  r = AVAILABLE_COMMANDS[i].command_func(pwm, n_args, command_args);
+
+  // SE O COMANDO FOR INVÁLIDO (Ex: "adlp"), PARAMOS IMEDIATAMENTE AQUI!
+  // Isto impede o crash quando o fuzzer inventa comandos malucos.
   if (i == N_AVAILABLE_COMMANDS) {
     pwm_error("Unrecognized command: '%s'!", command);
-    r = PWM_OPERATION_NOT_RECOGNIZED;
+    return PWM_OPERATION_NOT_RECOGNIZED;
   }
+
+  // Se o comando existir, executamos com toda a segurança
+  r = AVAILABLE_COMMANDS[i].command_func(pwm, n_args, command_args);
+
   if (r == PWM_OK) {
     printf("<< '%s' -- success.\n", command);
   } else {
@@ -84,7 +94,6 @@ pwm_res_t pwm_handle_command
   }
   return r;
 }
-
 typedef enum {
   PWM_NULL_STATE,
   PWM_INIT_STATE,
@@ -202,9 +211,9 @@ static pwm_res_t list_iterator(char* user, salt_t salt, hash_t hash, void* arg) 
 }
 
 static pwm_res_t list_command(PWM* pwm, int n_args, char** args) {
-  printf("In memory-contents for '%s'\n", (*pwm)->file);
   pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 0, n_args);
   if (r == PWM_OK) {
+    printf("In memory-contents for '%s'\n", (*pwm)->file); // Mover para aqui
     int count = 0;
     r = pwm_iterate(*pwm, &list_iterator, &count);
     if (r == PWM_OK) {
@@ -226,7 +235,7 @@ static pwm_res_t help_command(PWM* pwm, int n_args, char** args) {
       pointer++;
     }
   } else if (n_args == 1) {
-    while (pointer <= end_of_table) {
+    while (pointer < end_of_table) {
       if (strcmp(pointer -> command_name, args[0]) == 0) { 
         printf("  %s\n", pointer -> help_message);
         break;
@@ -278,5 +287,6 @@ void pwm_interactive_session() {
   }  
   if (pwm != NULL) {
     pwm_free(pwm);
+    pwm = NULL; // Evita ponteiros pendentes
   }
 }
