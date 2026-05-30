@@ -1,0 +1,424 @@
+        -:    0:Source:commands.c
+        -:    1:
+        -:    2:#include <sys/types.h>
+        -:    3:#include <sys/wait.h>
+        -:    4:#include <stdio.h>
+        -:    5:#include <string.h>
+        -:    6:#include <stdlib.h>
+        -:    7:#include <unistd.h>
+        -:    8:
+        -:    9:#include "pwm.h"
+        -:   10:
+        -:   11:typedef pwm_res_t command_func_t(PWM* pwm, int n_args, char** args);
+        -:   12:
+        -:   13:typedef struct {
+        -:   14:  char* command_name; 
+        -:   15:  command_func_t* command_func; 
+        -:   16:  char* help_message;
+        -:   17:} command_t;
+        -:   18:
+        -:   19:static pwm_res_t init_command(PWM* pwm, int n_args, char** args);
+        -:   20:static pwm_res_t open_command(PWM* pwm, int n_args, char** args);
+        -:   21:static pwm_res_t save_command(PWM* pwm, int n_args, char** args);
+        -:   22:static pwm_res_t clear_command(PWM* pwm, int n_args, char** args);
+        -:   23:static pwm_res_t add_command(PWM* pwm, int n_args, char** args);
+        -:   24:static pwm_res_t delete_command(PWM* pwm, int n_args, char** args);
+        -:   25:static pwm_res_t update_command(PWM* pwm, int n_args, char** args);
+        -:   26:static pwm_res_t check_command(PWM* pwm, int n_args, char** args);
+        -:   27:static pwm_res_t list_command(PWM* pwm, int n_args, char** args);
+        -:   28:static pwm_res_t quit_command(PWM* pwm, int n_args, char** args);
+        -:   29:static pwm_res_t help_command(PWM* pwm, int n_args, char** args);
+        -:   30:
+        -:   31:static command_t AVAILABLE_COMMANDS[] = {
+        -:   32: { "init", &init_command, 
+        -:   33:   "init <file> <admin-pass> : initialize PWM data (without saving to file)"
+        -:   34: },
+        -:   35: { "open", &open_command, 
+        -:   36:   "open <file> <admin-pass>: open PWM file supplying admin password."},
+        -:   37: { "save", &save_command,
+        -:   38:   "save : save PWM data to file."},
+        -:   39: { "clear", &clear_command, 
+        -:   40:   "clear: clear all PWM data in memory (all changes lost)"},
+        -:   41: { "add", &add_command, 
+        -:   42:   "add <user> <pass> : add user/password pair"},
+        -:   43: { "delete", &delete_command, 
+        -:   44:   "delete <user> : delete user"},
+        -:   45: { "update", &update_command, 
+        -:   46:   "update <user> <pass> : update password for user"},
+        -:   47: { "check", &check_command, 
+        -:   48:   "check <user> <pass> : check that password is correct for user"},
+        -:   49: { "list", &list_command, 
+        -:   50:   "list : list PWM entries" },
+        -:   51: { "quit", &quit_command, 
+        -:   52:   "quit : quits the program"},
+        -:   53: { "help", &help_command, 
+        -:   54:   "help [<cmd>]: displays this message or help for specific command" }
+        -:   55:};
+        -:   56:
+        -:   57:#define N_AVAILABLE_COMMANDS sizeof(AVAILABLE_COMMANDS)/sizeof(command_t)
+        -:   58:
+function pwm_handle_command called 200 returned 100% blocks executed 100%
+      200:   59:pwm_res_t pwm_handle_command
+        -:   60:(PWM* pwm, char* command, char** command_args, int n_args) {
+      200:   61:  pwm_res_t r = PWM_OK;
+        -:   62:  size_t i; // Declaramos o i aqui como size_t (limpa o warning de signedness)
+        -:   63:  int j;
+        -:   64:
+        -:   65:  // Usamos o i diretamente no ciclo, sem colocar 'size_t' ou 'int' aqui dentro!
+     1208:   66:  for (i = 0; i < N_AVAILABLE_COMMANDS; i++) {
+branch  0 taken 100%
+branch  1 taken 1% (fallthrough)
+     1206:   67:    if (strcmp(command, AVAILABLE_COMMANDS[i].command_name) == 0) {
+branch  0 taken 16% (fallthrough)
+branch  1 taken 84%
+      198:   68:      break; 
+        -:   69:    }
+        -:   70:  }
+        -:   71:
+      200:   72:  printf(">> Command: '%s' [", command); 
+call    0 returned 100%
+      451:   73:  for (j = 0; j < n_args; j++) { 
+branch  0 taken 56%
+branch  1 taken 44% (fallthrough)
+      251:   74:     printf(" '"); 
+call    0 returned 100%
+      251:   75:     printf("%s", command_args[j]);  
+call    0 returned 100%
+      251:   76:     printf("'"); 
+call    0 returned 100%
+        -:   77:  }
+      200:   78:  printf(" ]\n");
+call    0 returned 100%
+        -:   79:
+        -:   80:  // SE O COMANDO FOR INVÁLIDO (Ex: "adlp"), PARAMOS IMEDIATAMENTE AQUI!
+        -:   81:  // Isto impede o crash quando o fuzzer inventa comandos malucos.
+      200:   82:  if (i == N_AVAILABLE_COMMANDS) {
+branch  0 taken 1% (fallthrough)
+branch  1 taken 99%
+        2:   83:    pwm_error("Unrecognized command: '%s'!", command);
+call    0 returned 100%
+        2:   84:    return PWM_OPERATION_NOT_RECOGNIZED;
+        -:   85:  }
+        -:   86:
+        -:   87:  // Se o comando existir, executamos com toda a segurança
+      198:   88:  r = AVAILABLE_COMMANDS[i].command_func(pwm, n_args, command_args);
+call    0 returned 100%
+        -:   89:
+      198:   90:  if (r == PWM_OK) {
+branch  0 taken 52% (fallthrough)
+branch  1 taken 48%
+      102:   91:    printf("<< '%s' -- success.\n", command);
+call    0 returned 100%
+        -:   92:  } else {
+       96:   93:    printf("<< '%s' -- failure (error code %d) !\n", command, r);
+call    0 returned 100%
+        -:   94:  }
+      198:   95:  return r;
+        -:   96:}
+        -:   97:typedef enum {
+        -:   98:  PWM_NULL_STATE,
+        -:   99:  PWM_INIT_STATE,
+        -:  100:} init_state_t;
+        -:  101:
+        -:  102:static pwm_res_t 
+function assert_state_and_args called 179 returned 100% blocks executed 85%
+      179:  103:assert_state_and_args(PWM* pwm, init_state_t req_state, int n_args_expected, int n_args) {
+      179:  104:  pwm_res_t r = PWM_OK;
+      179:  105:  if (req_state == PWM_INIT_STATE && *pwm == NULL) {
+branch  0 taken 78% (fallthrough)
+branch  1 taken 22%
+branch  2 taken 19% (fallthrough)
+branch  3 taken 81%
+       27:  106:    pwm_error("No PWM data in memory! Use 'init' or 'open' first!");
+call    0 returned 100%
+       27:  107:    r = PWM_NOT_INITIALIZED; 
+        -:  108:  } 
+      152:  109:  else if(req_state == PWM_NULL_STATE && *pwm != NULL) {
+branch  0 taken 26% (fallthrough)
+branch  1 taken 74%
+branch  2 taken 5% (fallthrough)
+branch  3 taken 95%
+        2:  110:    pwm_error("PWM data not saved! Use 'clear' or 'save' first!");
+call    0 returned 100%
+        2:  111:    r = PWM_NOT_SAVED; 
+        -:  112:  }
+      150:  113:  else if (n_args != n_args_expected) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:  114:    pwm_error("Expected %d arguments, got %d!", n_args_expected, n_args);
+call    0 never executed
+    #####:  115:    r = PWM_OPERATION_NOT_RECOGNIZED;
+        -:  116:  }
+      179:  117:  return r;
+        -:  118:}
+        -:  119:
+function init_command called 20 returned 100% blocks executed 100%
+       20:  120:static pwm_res_t init_command(PWM* pwm, int n_args, char** args) {
+       20:  121:  pwm_res_t r = assert_state_and_args(pwm, PWM_NULL_STATE, 2, n_args);
+call    0 returned 100%
+       20:  122:  if (r == PWM_OK) {
+branch  0 taken 95% (fallthrough)
+branch  1 taken 5%
+       19:  123:    char* file = args[0];
+       19:  124:    char* password = args[1]; 
+       19:  125:    r = pwm_init(file, password, pwm);
+call    0 returned 100%
+        -:  126:  }
+       20:  127:  return r;
+        -:  128:}
+        -:  129:
+function open_command called 0 returned 0% blocks executed 0%
+    #####:  130:static pwm_res_t open_command(PWM* pwm, int n_args, char** args) {
+    #####:  131:  pwm_res_t r = assert_state_and_args(pwm, PWM_NULL_STATE, 2, n_args);
+call    0 never executed
+    #####:  132:  if (r == PWM_OK) {
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  133:    char* file = args[0];
+    #####:  134:    char* password = args[1]; 
+    #####:  135:    r = pwm_open(file, password, pwm);
+call    0 never executed
+        -:  136:  }
+    #####:  137:  return r;
+        -:  138:}
+        -:  139:
+function save_command called 0 returned 0% blocks executed 0%
+    #####:  140:static pwm_res_t save_command(PWM* pwm, int n_args, char** args) {
+    #####:  141:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 0, n_args);
+call    0 never executed
+    #####:  142:  if (r == PWM_OK) {
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  143:    r = pwm_save(*pwm);
+call    0 never executed
+    #####:  144:    pwm_free(*pwm);
+call    0 never executed
+    #####:  145:    *pwm = NULL;
+        -:  146:  }
+    #####:  147:  return r;
+        -:  148:}
+        -:  149:
+function clear_command called 20 returned 100% blocks executed 100%
+       20:  150:static pwm_res_t clear_command(PWM* pwm, int n_args, char** args) {
+       20:  151:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 0, n_args);
+call    0 returned 100%
+       20:  152:  if (r == PWM_OK) {
+branch  0 taken 80% (fallthrough)
+branch  1 taken 20%
+       16:  153:    pwm_free(*pwm);
+call    0 returned 100%
+       16:  154:    *pwm = NULL;
+        -:  155:  }
+       20:  156:  return r;
+        -:  157:}
+        -:  158:
+function add_command called 99 returned 100% blocks executed 100%
+       99:  159:static pwm_res_t add_command(PWM* pwm, int n_args, char** args) {
+       99:  160:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 2, n_args);
+call    0 returned 100%
+       99:  161:  if (r == PWM_OK) {
+branch  0 taken 81% (fallthrough)
+branch  1 taken 19%
+       80:  162:    char* user = args[0];
+       80:  163:    char* password = args[1];
+       80:  164:    r = pwm_add(*pwm, user, password);
+call    0 returned 100%
+        -:  165:  }
+       99:  166:  return r;
+        -:  167:}
+        -:  168:
+function delete_command called 0 returned 0% blocks executed 0%
+    #####:  169:static pwm_res_t delete_command(PWM* pwm, int n_args, char** args) {
+    #####:  170:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 1, n_args);
+call    0 never executed
+    #####:  171:  if (r == PWM_OK) {
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  172:    char* user = args[0];
+    #####:  173:    r = pwm_delete(*pwm, user);
+call    0 never executed
+        -:  174:  }
+    #####:  175:  return r;
+        -:  176:}
+        -:  177:
+function update_command called 0 returned 0% blocks executed 0%
+    #####:  178:static pwm_res_t update_command(PWM* pwm, int n_args, char** args) {
+    #####:  179:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 2, n_args);
+call    0 never executed
+    #####:  180:  if (r == PWM_OK) {
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  181:    char* user = args[0];
+    #####:  182:    char* password = args[1];
+    #####:  183:    r = pwm_update(*pwm, user, password);
+call    0 never executed
+        -:  184:  }
+    #####:  185:  return r;
+        -:  186:}
+        -:  187:
+function check_command called 0 returned 0% blocks executed 0%
+    #####:  188:static pwm_res_t check_command(PWM* pwm, int n_args, char** args) {
+    #####:  189:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 2, n_args);
+call    0 never executed
+    #####:  190:  if (r == PWM_OK) {
+branch  0 never executed (fallthrough)
+branch  1 never executed
+    #####:  191:    char* user = args[0];
+    #####:  192:    char* password = args[1];
+    #####:  193:    r = pwm_match(*pwm, user, password);
+call    0 never executed
+        -:  194:  }
+    #####:  195:  return r;
+        -:  196:}
+        -:  197:
+function quit_command called 20 returned 100% blocks executed 100%
+       20:  198:static pwm_res_t quit_command(PWM* pwm, int n_args, char** args) {
+       20:  199:  return assert_state_and_args(pwm, PWM_NULL_STATE, 0, n_args);
+call    0 returned 100%
+        -:  200:}
+        -:  201:
+function list_iterator called 32 returned 100% blocks executed 100%
+       32:  202:static pwm_res_t list_iterator(char* user, salt_t salt, hash_t hash, void* arg) {
+       32:  203:  int* pcount = (int*) arg;
+       32:  204:  (*pcount)++;
+       32:  205:  printf("%s:", user);
+call    0 returned 100%
+       32:  206:  pwm_print_hex_string(stdout, salt, sizeof(salt_t));
+call    0 returned 100%
+       32:  207:  putchar(':');
+call    0 returned 100%
+       32:  208:  pwm_print_hex_string(stdout, hash, sizeof(hash_t));
+call    0 returned 100%
+       32:  209:  putchar('\n');
+call    0 returned 100%
+       32:  210:  return PWM_OK;
+        -:  211:}
+        -:  212:
+function list_command called 20 returned 100% blocks executed 100%
+       20:  213:static pwm_res_t list_command(PWM* pwm, int n_args, char** args) {
+       20:  214:  pwm_res_t r = assert_state_and_args(pwm, PWM_INIT_STATE, 0, n_args);
+call    0 returned 100%
+       20:  215:  if (r == PWM_OK) {
+branch  0 taken 80% (fallthrough)
+branch  1 taken 20%
+       16:  216:    printf("In memory-contents for '%s'\n", (*pwm)->file); // Mover para aqui
+call    0 returned 100%
+       16:  217:    int count = 0;
+call    0 returned 100%
+       16:  218:    r = pwm_iterate(*pwm, &list_iterator, &count);
+call    0 returned 100%
+       16:  219:    if (r == PWM_OK) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       16:  220:      printf("%d users\n", count);
+call    0 returned 100%
+        -:  221:    } 
+        -:  222:  }
+       20:  223:  return r; 
+        -:  224:}
+        -:  225:
+        -:  226:
+function help_command called 19 returned 100% blocks executed 94%
+       19:  227:static pwm_res_t help_command(PWM* pwm, int n_args, char** args) {
+       19:  228:  command_t* pointer = AVAILABLE_COMMANDS;
+       19:  229:  command_t* end_of_table = AVAILABLE_COMMANDS + N_AVAILABLE_COMMANDS;
+       19:  230:  pwm_res_t r = PWM_OK;
+       19:  231:  if (n_args == 0) {
+branch  0 taken 42% (fallthrough)
+branch  1 taken 58%
+        8:  232:    printf("Available commands:\n");
+call    0 returned 100%
+       96:  233:    while (pointer < end_of_table) {
+branch  0 taken 92%
+branch  1 taken 8%
+       88:  234:      printf("  %s\n", pointer -> help_message);
+call    0 returned 100%
+       88:  235:      pointer++;
+        -:  236:    }
+       11:  237:  } else if (n_args == 1) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       69:  238:    while (pointer < end_of_table) {
+branch  0 taken 99%
+branch  1 taken 1% (fallthrough)
+       68:  239:      if (strcmp(pointer -> command_name, args[0]) == 0) { 
+branch  0 taken 15% (fallthrough)
+branch  1 taken 85%
+       10:  240:        printf("  %s\n", pointer -> help_message);
+call    0 returned 100%
+       10:  241:        break;
+        -:  242:      }
+       58:  243:      pointer++;
+        -:  244:    }
+       11:  245:    if (pointer == end_of_table) {
+branch  0 taken 9% (fallthrough)
+branch  1 taken 91%
+        1:  246:      r = PWM_OPERATION_NOT_RECOGNIZED;
+        1:  247:      pwm_error("Unknown command '%s'. Type 'help' for a list of commands.", args[0]);
+call    0 returned 100%
+        -:  248:    }
+        -:  249:  } else {
+    #####:  250:    r = PWM_OPERATION_NOT_RECOGNIZED;
+    #####:  251:    pwm_error("Type 'help' or 'help <command>'.");
+call    0 never executed
+        -:  252:  }
+       19:  253:  return r;
+        -:  254:}
+        -:  255:
+        -:  256:extern char* gets(char*); // avoid wierd warning
+        -:  257:
+function pwm_interactive_session called 20 returned 100% blocks executed 96%
+       20:  258:void pwm_interactive_session() {
+       20:  259:  char line[256];
+call    0 returned 100%
+       20:  260:  char* fields[PWM_MAX_COMMAND_ARGS];
+call    0 returned 100%
+        -:  261:  char* command_name;
+        -:  262:  char** command_args;
+       20:  263:  int line_count = 1;
+        -:  264:  int n_args;
+        -:  265:  pwm_res_t r;
+       20:  266:  PWM pwm = NULL;
+call    0 returned 100%
+        -:  267:  while(1) {
+      201:  268:    printf("PWM command (e.g. 'help') [%d]: ", line_count);
+call    0 returned 100%
+      201:  269:    fflush(stdout);
+call    0 returned 100%
+      201:  270:    if (gets(line) == NULL) {
+call    0 returned 100%
+branch  1 taken 1% (fallthrough)
+branch  2 taken 100%
+        1:  271:      break; // EOF detected
+        -:  272:    }
+      200:  273:    line_count++;
+      200:  274:    n_args = pwm_split_line(line, ' ', fields, PWM_MAX_COMMAND_ARGS);
+call    0 returned 100%
+      200:  275:    if (n_args > 0) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+      200:  276:      command_name = fields[0];
+      200:  277:      command_args = &fields[1];
+      200:  278:      n_args --; 
+        -:  279:    } else {
+    #####:  280:      command_name = "";
+    #####:  281:      command_args = 0;
+        -:  282:    }
+      200:  283:    r = pwm_handle_command(&pwm, command_name, command_args, n_args);
+call    0 returned 100%
+      200:  284:    if (strcmp(command_name, "quit") == 0 && r == PWM_OK) { 
+branch  0 taken 10% (fallthrough)
+branch  1 taken 90%
+branch  2 taken 95% (fallthrough)
+branch  3 taken 5%
+       19:  285:      break; 
+        -:  286:    }
+        -:  287:  }  
+       20:  288:  if (pwm != NULL) {
+branch  0 taken 5% (fallthrough)
+branch  1 taken 95%
+        1:  289:    pwm_free(pwm);
+call    0 returned 100%
+        1:  290:    pwm = NULL; // Evita ponteiros pendentes
+        -:  291:  }
+       20:  292:}

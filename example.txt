@@ -1,0 +1,12 @@
+init passfile.txt Qses1920!
+add bill Gates!0
+add steve sb0J.Mac
+add linus T0rvalds
+add edrdo inv_pass
+add edrdo Zxy199.
+add edrdo ZZZZ1x9
+update edrdo ZZZZ1x9
+delete bill
+list
+save
+quit

@@ -1,0 +1,10 @@
+help
+init password.txt Qses1920
+add charles 12!3456O
+add ziggy ZZ3456789012
+add charless aa34569
+add ziggy hZZ3456789012
+add adminp abcdef.3
+list
+clear
+quit

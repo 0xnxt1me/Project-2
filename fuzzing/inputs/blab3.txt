@@ -1,0 +1,10 @@
+help
+init password.txt Qses1920
+add robota Aa3456
+add roboty ZZ3456789012:
+add edward 123456789012
+add charlesz TZz3456789012
+add bobbyt .Aa3456
+list
+clear
+quit

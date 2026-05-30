@@ -10,7 +10,7 @@
 
 static pwm_node_t* create_node(char* user, salt_t salt, hash_t hash) {
   pwm_node_t* node = (pwm_node_t*) malloc(sizeof(pwm_node_t));
-  strcpy(node -> user, user);
+  strlcpy(node -> user, user, sizeof(node -> user));
   memcpy(node -> salt, salt, sizeof(node -> salt));
   memcpy(node -> hash, hash, sizeof(node -> hash));
   node -> next = NULL;
@@ -41,7 +41,6 @@ static pwm_res_t pwm_alloc(char* file, PWM* p_pwm) {
     free(pwm);
     perror("strdup");
     pwm_error("Could not allocate memory!");
-    free(pwm);
     return PWM_MEMORY_ALLOCATION_ERROR;
   }
   pwm -> entries = NULL;
@@ -56,6 +55,11 @@ pwm_res_t pwm_free(PWM pwm) {
     node = node -> next;
     free(aux);
   }
+
+  if (pwm -> file != NULL) {
+    free(pwm -> file);
+  }
+
   free(pwm);
   return PWM_OK;
 }
@@ -203,8 +207,9 @@ pwm_res_t pwm_delete(PWM pwm, char* user) {
       r = PWM_USER_NOT_FOUND;
       pwm_error("User '%s' does not exist!", user);
     } else {
-      free(node -> next);
-      node -> next = node -> next -> next;
+      pwm_node_t* to_delete = node -> next; // Guarda o nó a apagar
+      node -> next = to_delete -> next;
+      free(to_delete);
     } 
   }
   return r;

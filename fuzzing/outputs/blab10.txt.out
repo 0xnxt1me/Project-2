@@ -1,0 +1,29 @@
+PWM command (e.g. 'help') [1]: >> Command: 'help' [ 'list' ]
+  list : list PWM entries
+<< 'help' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+<< 'init' -- success.
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'robot' 'abcdef.S' ]
+PWM error! Invalid password 'abcdef.S'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [4]: >> Command: 'add' [ 'adminl' '4Zz3456789012' ]
+PWM error! Invalid password '4Zz3456789012'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [5]: >> Command: 'add' [ 'edwardr' '?123456789012' ]
+PWM error! Invalid password '?123456789012'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'edwardh' 'Zz3456789012' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [7]: >> Command: 'add' [ 'ziggy' 'AbcdefZ' ]
+PWM error! Invalid password 'AbcdefZ'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [8]: >> Command: 'list' [ ]
+In memory-contents for 'password.txt'
+admin:bce37cb3:45a19118dcee566a145c5cc92076e492
+edwardh:39ea5100:ca6bc543272fd6e3465bdb0f3373f95c
+2 users
+<< 'list' -- success.
+PWM command (e.g. 'help') [9]: >> Command: 'clear' [ ]
+<< 'clear' -- success.
+PWM command (e.g. 'help') [10]: >> Command: 'quit' [ ]
+<< 'quit' -- success.

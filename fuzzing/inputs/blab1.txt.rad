@@ -1,0 +1,10 @@
+help delete
+init password.txt Qses-1040149
+add edward ZZ34570882392
+add admin 129
+add charlesf abcdef.e
+add charlesf y12!3456
+add charles Zz3456789012
+list
+clear
+quit

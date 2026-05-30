@@ -1,0 +1,48 @@
+PWM command (e.g. 'help') [1]: >> Command: 'help' [ ]
+Available commands:
+  init <file> <admin-pass> : initialize PWM data (without saving to file)
+  open <file> <admin-pass>: open PWM file supplying admin password.
+  save : save PWM data to file.
+  clear: clear all PWM data in memory (all changes lost)
+  add <user> <pass> : add user/password pair
+  delete <user> : delete user
+  update <user> <pass> : update password for user
+  check <user> <pass> : check that password is correct for user
+  list : list PWM entries
+  quit : quits the program
+  help [<cmd>]: displays this message or help for specific command
+<< 'help' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+<< 'init' -- success.
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'robota' 'Aa3456' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [4]: >> Command: 'adlp' [ ]
+PWM error! Unrecognized command: 'adlp'!
+PWM command (e.g. 'help') [5]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+PWM error! PWM data not saved! Use 'clear' or 'save' first!
+<< 'init' -- failure (error code 2) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'robota' 'Aa3456' ]
+PWM error! User 'robota' already exists!
+<< 'add' -- failure (error code 6) !
+PWM command (e.g. 'help') [7]: >> Command: 'add' [ 'roboty' 'ZZ3456789012:' ]
+PWM error! Invalid password 'ZZ3456789012:'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [8]: >> Command: 'add' [ 'edward' '65536' ]
+PWM error! Invalid password '65536'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [9]: >> Command: 'add' [ 'charlesz' 'TZz3456789012' ]
+PWM error! Invalid password 'TZz3456789012'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [10]: >> Command: 'add' [ 'bobbyt' '.Aa3456' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [11]: >> Command: 'list' [ ]
+In memory-contents for 'password.txt'
+admin:d33eb332:dbee81f90e37fc9c22af72be65af71bb
+robota:4c7ce166:e7bffd60c154a8666c270f3c364485bc
+bobbyt:f8299873:0ebaa6adb3eeb5a26aff3a060151012d
+3 users
+<< 'list' -- success.
+PWM command (e.g. 'help') [12]: >> Command: 'clear' [ ]
+<< 'clear' -- success.
+PWM command (e.g. 'help') [13]: >> Command: 'quit' [ ]
+<< 'quit' -- success.
