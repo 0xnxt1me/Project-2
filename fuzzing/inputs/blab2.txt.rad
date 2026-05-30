@@ -1,0 +1,10 @@
+init password.txt Qses1920
+help
+add bobby qses
+add ziggy ZZ0
+add edward gqses
+add charlesg 123456789012F
+add admin AAa-411
+list
+clear
+quit

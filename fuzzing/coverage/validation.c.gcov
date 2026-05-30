@@ -1,0 +1,148 @@
+        -:    0:Source:validation.c
+        -:    1:// System headers
+        -:    2:#include <stdlib.h>
+        -:    3:#include <stdio.h>
+        -:    4:#include <string.h>
+        -:    5:// #include <bsd/string.h>
+        -:    6:#include "pwm.h"
+        -:    7:
+        -:    8:/* In pwm.h you will find:
+        -:    9:  #define PWM_MIN_USER_ID_LEN 4
+        -:   10:  #define PWM_MAX_USER_ID_LEN 10
+        -:   11:  #define PWM_MIN_PASSWORD_LEN 6
+        -:   12:  #define PWM_MAX_PASSWORD_LEN 12
+        -:   13:*/
+        -:   14:
+        -:   15:// User id validation:
+        -:   16:// - Length must be between 4 and 10.
+        -:   17:// - All characters must be lowercase letters: 'a' to 'z'.
+function pwm_is_valid_user called 73 returned 100% blocks executed 100%
+       73:   18:pwm_res_t pwm_is_valid_user(const char* user) {
+       73:   19:  int len = strlen(user);
+       73:   20:  int r = PWM_INVALID_USER_ID;
+        -:   21:  int i;
+        -:   22:  char c;
+       73:   23:  if (len >= PWM_MIN_USER_ID_LEN && len <= PWM_MAX_USER_ID_LEN) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+      517:   24:    for (i = 0; i < len; i++) {
+branch  0 taken 86%
+branch  1 taken 14% (fallthrough)
+      444:   25:      c = user[i];
+      444:   26:      if (c < 'a' || c > 'z') {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+        -:   27:        break;
+        -:   28:      }
+        -:   29:    }
+       73:   30:    if (i == len) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       73:   31:      r = PWM_OK;
+        -:   32:    }
+        -:   33:  }
+       73:   34:  return r;
+        -:   35:}
+        -:   36:
+        -:   37:// A valid password:
+        -:   38:// - MUST have a length between 6 and 12.
+        -:   39:// - MUST contain at least one lower-case letter ('a' to 'z')
+        -:   40://   one upper-case letter ('A' to 'Z') and one digit ('0' and '9').
+        -:   41:// - MAY (optionally) contain at most ONE punctuation character
+        -:   42://   of the following: '.', ':', ',', '!' '?'.
+        -:   43:// - MUST NOT have contain a black-listed sequence 
+        -:   44://
+        -:   45:
+        -:   46://
+        -:   47:// A short black-list.
+        -:   48://
+        -:   49:static const char* BLACK_LIST[] = { 
+        -:   50:  "123", "321", "abc", "xyz", "pass", "senha",
+        -:   51:  "xpto", "cenas", "alice", "bob"
+        -:   52:};
+        -:   53:
+        -:   54:#define BLACK_LIST_SIZE sizeof(BLACK_LIST) / sizeof(const char*)
+        -:   55:
+        -:   56:// Expected return values:
+        -:   57:// PWM_OK or PWM_INVALID_PASSWORD
+function pwm_is_valid_password called 92 returned 100% blocks executed 97%
+       92:   58:pwm_res_t pwm_is_valid_password(const char* password) {
+        -:   59:  
+       92:   60:  int len = strlen(password);
+        -:   61:  
+        -:   62:  // Length check
+       92:   63:  if (len < PWM_MIN_PASSWORD_LEN || len > PWM_MAX_PASSWORD_LEN) {
+branch  0 taken 86% (fallthrough)
+branch  1 taken 14%
+branch  2 taken 22% (fallthrough)
+branch  3 taken 78%
+       30:   64:    return PWM_INVALID_PASSWORD;
+        -:   65:  }
+        -:   66:
+        -:   67:  // Black-list check 
+      576:   68:  for (size_t i = 0; i < BLACK_LIST_SIZE; i++) {
+branch  0 taken 91%
+branch  1 taken 9% (fallthrough)
+      527:   69:    if (strcasestr(password, BLACK_LIST[i]) != NULL) {
+branch  0 taken 2% (fallthrough)
+branch  1 taken 98%
+       13:   70:      return PWM_INVALID_PASSWORD;
+        -:   71:    }
+        -:   72:  }
+        -:   73:
+       49:   74:  int u = 0, l = 0, d = 0, p = 0;
+        -:   75:
+      430:   76:  for (int i = 0; i < len; i++) {
+branch  0 taken 89%
+branch  1 taken 11% (fallthrough)
+      382:   77:    char c = password[i];
+      382:   78:    if (c >= 'a' && c <= 'z') {
+branch  0 taken 22% (fallthrough)
+branch  1 taken 78%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+       83:   79:      l++;
+      299:   80:    } else if (c >= 'A' && c <= 'Z') {
+branch  0 taken 16% (fallthrough)
+branch  1 taken 84%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+       47:   81:      u++;
+      252:   82:    } else if (c >= '0' && c <= '9') {
+branch  0 taken 96% (fallthrough)
+branch  1 taken 4%
+branch  2 taken 100% (fallthrough)
+branch  3 taken 0%
+      242:   83:      d++;
+       10:   84:    } else if (strchr(".:,!?", c) != NULL) {
+branch  0 taken 90% (fallthrough)
+branch  1 taken 10%
+        9:   85:      if (p == 1) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+    #####:   86:        return PWM_INVALID_PASSWORD;
+        -:   87:      } else {
+        9:   88:        p = 1;
+        -:   89:      }
+        -:   90:    } else {
+        1:   91:      return PWM_INVALID_PASSWORD;
+        -:   92:    }
+        -:   93:  }
+       48:   94:  if (   l == 0 
+branch  0 taken 90% (fallthrough)
+branch  1 taken 10%
+       43:   95:      || u == 0 
+branch  0 taken 93% (fallthrough)
+branch  1 taken 7%
+       40:   96:      || d == 0) {
+branch  0 taken 0% (fallthrough)
+branch  1 taken 100%
+        8:   97:    return PWM_INVALID_PASSWORD;
+        -:   98:  }
+       40:   99:  return PWM_OK;
+        -:  100:} 
+        -:  101:

@@ -1,0 +1,26 @@
+PWM command (e.g. 'help') [1]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+<< 'init' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'add' [ 'ziggyz' 'Zz3456789012' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'admin' '123456789012h' ]
+PWM error! User 'admin' cannot be added!
+<< 'add' -- failure (error code 3) !
+PWM command (e.g. 'help') [4]: >> Command: 'add' [ 'ziggy' 'qsesy' ]
+PWM error! Invalid password 'qsesy'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [5]: >> Command: 'add' [ 'charlesa' '56472954746354725695234015!3456k' ]
+PWM error! Invalid password '56472954746354725695234015!3456k'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'ziggy' 'xqses' ]
+PWM error! Invalid password 'xqses'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [7]: >> Command: 'list' [ ]
+In memory-contents for 'password.txt'
+admin:5626f348:cc9d63cd35708fdbe2cf589128c84079
+ziggyz:97a2af2b:cf2357cb98ee11ff8fc7e724318d38ac
+2 users
+<< 'list' -- success.
+PWM command (e.g. 'help') [8]: >> Command: 'clear' [ ]
+<< 'clear' -- success.
+PWM command (e.g. 'help') [9]: >> Command: 'quit' [ ]
+<< 'quit' -- success.

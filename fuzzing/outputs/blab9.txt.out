@@ -1,0 +1,29 @@
+PWM command (e.g. 'help') [1]: >> Command: 'help' [ 'delete' ]
+  delete <user> : delete user
+<< 'help' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+<< 'init' -- success.
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'bobbyt' 'Caa3456' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [4]: >> Command: 'add' [ 'edward' 'FAbcdef' ]
+PWM error! Invalid password 'FAbcdef'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [5]: >> Command: 'add' [ 'edward' 'IAbcdef' ]
+PWM error! Invalid password 'IAbcdef'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'charles' 'LAbcdef' ]
+PWM error! Invalid password 'LAbcdef'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [7]: >> Command: 'add' [ 'aliceq' 'wAa3456' ]
+<< 'add' -- success.
+PWM command (e.g. 'help') [8]: >> Command: 'list' [ ]
+In memory-contents for 'password.txt'
+admin:4e3eed53:c99708fd6ca2a4650e1d5a9c80e552a0
+bobbyt:fd9f9d97:1a79c8b1f5ce8a379775efbcf2d035b1
+aliceq:f8f2df3d:7517ad738f9f020bd975f54b41c4ec6a
+3 users
+<< 'list' -- success.
+PWM command (e.g. 'help') [9]: >> Command: 'clear' [ ]
+<< 'clear' -- success.
+PWM command (e.g. 'help') [10]: >> Command: 'quit' [ ]
+<< 'quit' -- success.

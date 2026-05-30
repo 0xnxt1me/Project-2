@@ -1,0 +1,9 @@
+help delete
+init password.txt Qses0
+add robot 212!3456
+add bobbyv qses
+add bobbyl 0abcdef.
+add alicea .Aa3456
+list
+clear
+quit

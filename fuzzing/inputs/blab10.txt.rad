@@ -1,0 +1,10 @@
+help list
+init password.txt Qses1920
+add robot abcdef.S
+add adminl 4Zz0
+add edwardr ?123456789012
+add edwardh Zz3456789012
+add ziggy AbcdefZ
+list
+clear
+quit

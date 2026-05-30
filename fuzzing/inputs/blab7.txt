@@ -1,0 +1,10 @@
+help
+init password.txt Qses1920
+add bobby Aa3456
+add bobbyi Aa3456
+add bobbyi Aa3456
+add bobbyi Aa3456
+add bobbyi Aa3456
+list
+clear
+quit

@@ -1,0 +1,10 @@
+help save
+init password.txt Qses1920
+add admin CZz3456789012
+add robot ,Abcdef
+add bobby V12!3456
+add robotb 1234567890123
+add edwardd 1234567890124
+list
+clear
+quit

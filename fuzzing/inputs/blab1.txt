@@ -1,0 +1,10 @@
+help delete
+init password.txt Qses1920
+add edward ZZ34567890129
+add admin 123456789012
+add charlesf abcdef.e
+add charlesf y12!3456
+add charles Zz3456789012
+list
+clear
+quit

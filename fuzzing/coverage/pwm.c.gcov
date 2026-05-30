@@ -1,0 +1,24 @@
+        -:    0:Source:pwm.c
+        -:    1:#include <stdio.h>
+        -:    2:#include <errno.h>
+        -:    3:#include "pwm.h"
+        -:    4:
+function main called 20 returned 100% blocks executed 75%
+       20:    5:int main(int argc, char** argv) {
+       20:    6:  --argc; ++argv;
+       20:    7:  if (argc == 1) {
+branch  0 taken 100% (fallthrough)
+branch  1 taken 0%
+       20:    8:    if (freopen(argv[0], "r", stdin) == 0) {
+call    0 returned 100%
+branch  1 taken 0% (fallthrough)
+branch  2 taken 100%
+    #####:    9:      perror(argv[0]);
+call    0 never executed
+    #####:   10:      return 1;
+        -:   11:    }
+        -:   12:  }
+       20:   13:  pwm_interactive_session();
+call    0 returned 100%
+       20:   14:  return 0;
+        -:   15:}

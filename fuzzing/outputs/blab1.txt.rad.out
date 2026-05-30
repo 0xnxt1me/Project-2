@@ -1,0 +1,29 @@
+PWM command (e.g. 'help') [1]: >> Command: 'help' [ 'delete' ]
+  delete <user> : delete user
+<< 'help' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'init' [ 'password.txt' 'Qses-1040149' ]
+PWM error! Invalid password 'Qses-1040149'!
+<< 'init' -- failure (error code 8) !
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'edward' 'ZZ34570882392' ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'add' -- failure (error code 1) !
+PWM command (e.g. 'help') [4]: >> Command: 'add' [ 'admin' '129' ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'add' -- failure (error code 1) !
+PWM command (e.g. 'help') [5]: >> Command: 'add' [ 'charlesf' 'abcdef.e' ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'add' -- failure (error code 1) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'charlesf' 'y12!3456' ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'add' -- failure (error code 1) !
+PWM command (e.g. 'help') [7]: >> Command: 'add' [ 'charles' 'Zz3456789012' ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'add' -- failure (error code 1) !
+PWM command (e.g. 'help') [8]: >> Command: 'list' [ ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'list' -- failure (error code 1) !
+PWM command (e.g. 'help') [9]: >> Command: 'clear' [ ]
+PWM error! No PWM data in memory! Use 'init' or 'open' first!
+<< 'clear' -- failure (error code 1) !
+PWM command (e.g. 'help') [10]: >> Command: 'quit' [ ]
+<< 'quit' -- success.

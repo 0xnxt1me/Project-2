@@ -1,0 +1,40 @@
+PWM command (e.g. 'help') [1]: >> Command: 'init' [ 'password.txt' 'Qses1920' ]
+<< 'init' -- success.
+PWM command (e.g. 'help') [2]: >> Command: 'help' [ ]
+Available commands:
+  init <file> <admin-pass> : initialize PWM data (without saving to file)
+  open <file> <admin-pass>: open PWM file supplying admin password.
+  save : save PWM data to file.
+  clear: clear all PWM data in memory (all changes lost)
+  add <user> <pass> : add user/password pair
+  delete <user> : delete user
+  update <user> <pass> : update password for user
+  check <user> <pass> : check that password is correct for user
+  list : list PWM entries
+  quit : quits the program
+  help [<cmd>]: displays this message or help for specific command
+<< 'help' -- success.
+PWM command (e.g. 'help') [3]: >> Command: 'add' [ 'bobby' 'qses' ]
+PWM error! Invalid password 'qses'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [4]: >> Command: 'add' [ 'ziggy' 'ZZ0' ]
+PWM error! Invalid password 'ZZ0'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [5]: >> Command: 'add' [ 'edward' 'gqses' ]
+PWM error! Invalid password 'gqses'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [6]: >> Command: 'add' [ 'charlesg' '123456789012F' ]
+PWM error! Invalid password '123456789012F'!
+<< 'add' -- failure (error code 8) !
+PWM command (e.g. 'help') [7]: >> Command: 'add' [ 'admin' 'AAa-411' ]
+PWM error! User 'admin' cannot be added!
+<< 'add' -- failure (error code 3) !
+PWM command (e.g. 'help') [8]: >> Command: 'list' [ ]
+In memory-contents for 'password.txt'
+admin:9c3bf898:4e88d1280aaab44b238b81bf34683a61
+1 users
+<< 'list' -- success.
+PWM command (e.g. 'help') [9]: >> Command: 'clear' [ ]
+<< 'clear' -- success.
+PWM command (e.g. 'help') [10]: >> Command: 'quit' [ ]
+<< 'quit' -- success.
