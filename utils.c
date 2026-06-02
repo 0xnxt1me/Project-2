@@ -34,9 +34,10 @@ int pwm_split_line
   return count; 
 }
 
-pwm_res_t pwm_hash_password(salt_t salt, char* password, hash_t checksum) {
+pwm_res_t pwm_hash_password(char* user, salt_t salt, char* password, hash_t checksum) {
   MD5_CTX ctx;
   MD5Init(&ctx);
+  MD5Update(&ctx, (unsigned char*) user, strlen(user));
   MD5Update(&ctx, salt, sizeof(salt_t));
   MD5Update(&ctx, (unsigned char*) password, strlen(password));
   MD5Final(checksum, &ctx);
