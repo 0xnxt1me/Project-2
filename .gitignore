@@ -1,0 +1,27 @@
+*.o
+pwm
+pwmsafe
+
+# Executables
+gtest/testuser
+gtest/testpass
+fuzzing/blab
+fuzzing/radamsa
+md5test/md5test
+ss/pwm
+ss/sc_exec
+ss/hello
+
+# Folders to ignore
+gtest/library/
+fuzzing/inputs/
+fuzzing/outputs/
+fuzzing/coverage/
+
+# Gcov / logs
+*.plist
+*.gcda
+*.gcno
+*.gcov
+leak-*
+crash-*
