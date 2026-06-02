@@ -114,11 +114,18 @@ pwm_res_t pwm_open(char* file, char* password, PWM* pwm) {
        }
        node = create_node(user, salt, hash);
        if (count == 1) {
+         if (strcmp(node->user, PWM_ADMIN_USER) != 0) {
+           r = PWM_FILE_CORRUPT;
+           pwm_error("Corrupt file '%s': first user must be '%s'!", (*pwm)->file, PWM_ADMIN_USER);
+           free(node);
+           break;
+         }
          hash_t vhash;
          pwm_hash_password(node -> salt, password, vhash);
          if (memcmp(node -> hash, vhash, sizeof(hash_t)) != 0) {
            r = PWM_PASSWORD_MISMATCH;
            pwm_error("Password mismatch for admin user!");
+           free(node);
            break;
          }
          (*pwm) -> entries = node;
@@ -126,6 +133,10 @@ pwm_res_t pwm_open(char* file, char* password, PWM* pwm) {
          curr -> next = node;
        }  
        curr = node;
+     }
+     if (r == PWM_OK && count == 0) {
+       r = PWM_FILE_CORRUPT;
+       pwm_error("Corrupt file '%s': empty password database!", (*pwm)->file);
      }
      if (r != PWM_OK) {
        pwm_free(*pwm); 

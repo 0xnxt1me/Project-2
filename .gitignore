@@ -17,6 +17,7 @@ gtest/library/
 fuzzing/inputs/
 fuzzing/outputs/
 fuzzing/coverage/
+assignment/
 
 # Gcov / logs
 *.plist
