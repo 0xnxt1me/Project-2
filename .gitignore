@@ -1,8 +1,0 @@
-*.o
-pwn
-*.plist
-*.gcda
-*.gcno
-*.gcov
-leak-*
-crash-*
