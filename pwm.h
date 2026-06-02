@@ -54,6 +54,7 @@ typedef struct _pwm_node_t {
 
 struct _pwm_t {
    char* file;
+   char admin_password[PWM_MAX_PASSWORD_LEN + 1];
    pwm_node_t* entries;
 };
 typedef struct _pwm_t* PWM;
