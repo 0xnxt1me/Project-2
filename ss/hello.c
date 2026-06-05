@@ -3,16 +3,16 @@
 #include <string.h>
 
 extern void dump_stack(void);
-extern char* gets(char*); 
+// Removed dangerous extern gets() declaration
 
 int main(int argc, char**argv) {
   char name[128];
   printf("%p\n", name);
   printf("What’s your name?\n");
-  gets(name);
+  fgets(name, sizeof(name), stdin);
   dump_stack();
   printf("Hello ");
-  printf(name);
+  printf("%s", name);
   putchar('\n');
   fflush(stdout);
   // dump_stack();
