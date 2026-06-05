@@ -321,6 +321,9 @@ pwm_res_t pwm_update(PWM pwm, char* user, char* password) {
            && (r = pwm_hash_password(node -> user, salt, password, hash)) == PWM_OK) {
           memcpy(node -> salt, salt, sizeof(salt));
           memcpy(node -> hash, hash, sizeof(hash));
+          if (strcmp(node -> user, PWM_ADMIN_USER) == 0) {
+            strlcpy(pwm -> admin_password, password, sizeof(pwm -> admin_password));
+          }
         }
         break;
       }

