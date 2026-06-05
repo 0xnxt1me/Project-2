@@ -4,7 +4,7 @@ CFLAGS=-g -Wall -std=c11 \
        -D_XOPEN_SOURCE=500 -D_GNU_SOURCE \
        -fno-asynchronous-unwind-tables
 
-LDFLAGS=-lbsd -fno-asynchronous-unwind-tables
+LDFLAGS=-lbsd -lcrypto -fno-asynchronous-unwind-tables
 
 # Executable code on the stack?
 NOXSTACK=0

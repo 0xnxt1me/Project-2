@@ -253,8 +253,6 @@ static pwm_res_t help_command(PWM* pwm, int n_args, char** args) {
   return r;
 }
 
-extern char* gets(char*); // avoid wierd warning
-
 void pwm_interactive_session() {
   char line[256];
   char* fields[PWM_MAX_COMMAND_ARGS];
@@ -267,7 +265,7 @@ void pwm_interactive_session() {
   while(1) {
     printf("PWM command (e.g. 'help') [%d]: ", line_count);
     fflush(stdout);
-    if (gets(line) == NULL) {
+    if (fgets(line, sizeof(line), stdin) == NULL) {
       break; // EOF detected
     }
     line_count++;

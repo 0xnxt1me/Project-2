@@ -10,7 +10,7 @@ PWM_OBJS=pwm.o commands.o core.o utils.o md5.o validation.o
 all: pwm
 
 pwm: $(PWM_OBJS) 
-	$(CC) $(LDFLAGS) $(PWM_OBJS) -lbsd -o pwm
+	$(CC) $(LDFLAGS) $(PWM_OBJS) -lbsd -lcrypto -o pwm
 
 clean:
 	rm -f *.o pwm *.plist *.gcda *.gcno *.gcov leak-* crash-*

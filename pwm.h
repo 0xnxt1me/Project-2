@@ -54,6 +54,7 @@ typedef struct _pwm_node_t {
 
 struct _pwm_t {
    char* file;
+   char admin_password[PWM_MAX_PASSWORD_LEN + 1];
    pwm_node_t* entries;
 };
 typedef struct _pwm_t* PWM;
@@ -85,7 +86,7 @@ void pwm_interactive_session(void);
 
 // UTILITY FUNCTIONS
 pwm_res_t pwm_generate_salt(salt_t salt);
-pwm_res_t pwm_hash_password(salt_t salt, char* password, hash_t hash);
+pwm_res_t pwm_hash_password(char* user, salt_t salt, char* password, hash_t hash);
 int pwm_decode_hex_string(char* str, unsigned char* data, int expected_length);
 void pwm_print_hex_string(FILE* fp, unsigned char* data, int length);
 
