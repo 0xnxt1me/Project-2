@@ -7,18 +7,8 @@ executable = "./pwm"
 
 context.binary = executable
 
-if local:
-	r = process(executable)
-else:
-    r = remote("100.101.159.45", 5003)
+r = process(executable)
     
-#address_str = r.recvline().strip()
-#address = int(address_str, 16)
-
-#n = 0x6c + 0x4
-
-
-
 # not really the size of the array, but the distance it was to rbp 
 CHAR_ARRAY_SIZE = 0x120
 
